@@ -1,0 +1,4 @@
+#pragma once
+#define sfmlapp_VERSION_MAJOR @sfmlapp_VERSION_MAJOR@
+#define sfmlapp_VERSION_MAJOR @sfmlapp_VERSION_MAJOR@
+#define RESOURCE_PATH "@RESOURCE_PATH@"
