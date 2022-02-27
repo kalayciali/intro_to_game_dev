@@ -1,4 +1,8 @@
 #include "Game.h"
+#include <SFML/Graphics/Color.hpp>
+#include <ctime>
+#include <iostream>
+#include <ostream>
 
 void PlayerConfig::set(std::ifstream & fin)
 {
@@ -134,7 +138,6 @@ void Game::spawnEnenmy()
     // cast it to int
     int speed_diff = m_E_config.SMAX - m_E_config.SMIN;
 
-    std::cout << speed_diff << std::endl;
 
     velocity.x = ( rand() % speed_diff ) + m_E_config.SMIN;
     velocity.y = ( rand() % speed_diff ) + m_E_config.SMIN;
@@ -144,7 +147,6 @@ void Game::spawnEnenmy()
 
     // shape
     int v_diff = m_E_config.VMAX - m_E_config.VMIN;
-    std::cout << v_diff << std::endl;
     int vertices  = ( rand() % v_diff ) + m_E_config.VMIN;
 
     enemy->c_shape = std::make_shared<CShape>(
@@ -173,11 +175,12 @@ void Game::spawnSmallEnemies(ptr<Entity> e)
     auto color = e->c_shape->circle.getFillColor();
     auto speed = e->c_transform->velocity.magnitude();
     auto pos = e->c_transform->pos;
-    float angle = 2.f / vertices;
+    float piece = 2.f / vertices;
     int score = e->c_score->score;
 
     for (int i = 0; i < vertices; i++)
     {
+        float angle = i * piece * M_PI;
         auto small_enemy = m_entity_fact.addEntity("enemy");
 
         small_enemy->c_score = std::make_shared<CScore>(2 * score);
@@ -214,6 +217,7 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 & target)
     pos.y += entity->c_shape->circle.getRadius() * sin(angle);
 
     auto bullet = m_entity_fact.addEntity("bullet");
+
     bullet->c_transform = std::make_shared<CTransform>(
             pos, 
             Vec2(m_B_config.S * std::cos(angle), m_B_config.S * std::sin(angle)),
@@ -241,10 +245,6 @@ void Game::spawnSpecialWeapon(ptr<Entity> entity)
 {
 }
 
-void update()
-{
-}
-
 //////////////////////////////////////////////////
 // SYSTEMS ////////////////////////
 //////////////////////////////////////////////////
@@ -252,6 +252,7 @@ void update()
 void Game::sMovement()
 {
     Vec2 player_vel;
+
     float diff = m_P_config.S - m_P_config.S * std::cos(0.25f);
 
     if (m_player->c_input->left) 
@@ -260,32 +261,32 @@ void Game::sMovement()
         player_vel.x += m_P_config.S;
 
     if (m_player->c_input->up)
-        player_vel.y += m_P_config.S;
-    if (m_player->c_input->down)
         player_vel.y -= m_P_config.S;
+    if (m_player->c_input->down)
+        player_vel.y += m_P_config.S;
 
     if (m_player->c_input->right && m_player->c_input->up)
     {
         player_vel.x -= diff;
-        player_vel.y -= diff;
+        player_vel.y += diff;
     }
 
     if (m_player->c_input->left && m_player->c_input->up)
     {
         player_vel.x += diff;
-        player_vel.y -= diff;
+        player_vel.y += diff;
     }
 
     if (m_player->c_input->left && m_player->c_input->down)
     {
         player_vel.x += diff;
-        player_vel.y += diff;
+        player_vel.y -= diff;
     }
 
     if (m_player->c_input->right && m_player->c_input->down)
     {
         player_vel.x -= diff;
-        player_vel.y += diff;
+        player_vel.y -= diff;
     }
 
     m_player->c_transform->velocity = player_vel;
@@ -377,17 +378,18 @@ void Game::sLifespan()
         {
             int end_time = e->c_lifespan->currentFrame();
 
-            if (end_time > m_current_frame)
+            if (end_time < m_current_frame)
             {
                 e->destroy();
                 continue;
             }
 
             auto color = e->c_shape->circle.getFillColor();
-            color.a = color.a - 10.f;
-            e->c_shape->circle.setFillColor(color);
+            sf::Color newColor(color.r, color.g, color.b, color.a - 10);
+            e->c_shape->circle.setFillColor(newColor);
         }
     }
+
 }
 
 void Game::sRender()
@@ -406,6 +408,7 @@ void Game::sRender()
     m_text.setFont(m_font);
     m_text.setString(text);
     m_window.draw(m_text);
+
     m_window.display();
 }
 
@@ -413,7 +416,10 @@ void Game::sEnemySpawner()
 {
     int frame_passed = m_current_frame - m_last_enemy_time;
     if (frame_passed > m_E_config.SI)
+    {
         spawnEnenmy();
+        m_last_enemy_time = m_current_frame;
+    }
 }
 
 void Game::checkBorder(ptr<Entity> e)
@@ -423,6 +429,7 @@ void Game::checkBorder(ptr<Entity> e)
     float radius = e->c_collision->radius;
     auto pos = e->c_transform->pos;
     auto velocity = e->c_transform->velocity;
+
     if ((pos.x + radius >= window.x) && (velocity.x > 0))
         e->c_transform->velocity.x = -velocity.x;
 
@@ -446,6 +453,7 @@ void Game::sCollision()
 
         for (auto e : m_entity_fact.getEntities("enemy"))
         {
+
             float dist = p->c_transform->pos.dist(e->c_transform->pos);
 
             if ( ( p->c_collision->radius + e->c_collision->radius ) >= dist)
@@ -454,9 +462,10 @@ void Game::sCollision()
                 m_score -= e->c_score->score;
                 spawnPlayer();
             }
-            checkBorder(e);
 
+            checkBorder(e);
         }
+
     }
 
     for (auto b : m_entity_fact.getEntities("bullet"))
@@ -469,11 +478,16 @@ void Game::sCollision()
             {
                 b->destroy();
                 e->destroy();
+
+                if (!e->c_lifespan)
+                    spawnSmallEnemies(e);
+
                 m_score += e->c_score->score;
             }
 
         }
     }
+
 
 }
 
@@ -484,6 +498,7 @@ void::Game::run()
     {
         // update entities at the start of the frame
         m_entity_fact.update();
+        sLifespan();
 
         if (!m_paused)
         {
@@ -491,9 +506,8 @@ void::Game::run()
             sMovement();
         }
 
-        sUserInput();
         sCollision();
-        sLifespan();
+        sUserInput();
         sRender();
 
         m_current_frame++;

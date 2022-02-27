@@ -1,4 +1,5 @@
 #include "EntityManager.h"
+#include <algorithm>
 
 bool ifAlive(ptr<Entity> e)
 {
@@ -21,12 +22,12 @@ void EntityManager::update()
     // delayed action in order to avoid iterator invalidation
     removeDead(m_entities);
 
-    for (auto &  [tag, entity_vec] : m_entity_map)
+    for (auto & [tag, entity_vec] : m_entity_map)
     {
         removeDead(entity_vec);
     }
 
-    for (auto & e : m_to_add)
+    for (auto e : m_to_add)
     {
         m_entities.push_back(e);
         m_entity_map[e->tag()].push_back(e);
@@ -38,7 +39,7 @@ void EntityManager::update()
 
 void EntityManager::removeDead(EntityVec & entities)
 {
-    EntityVec::iterator dead = std::stable_partition(
+    EntityVec::iterator dead = std::partition(
             entities.begin(), entities.end(), ifAlive);
     entities.erase(dead, entities.end());
 }

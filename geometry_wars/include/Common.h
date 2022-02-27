@@ -17,4 +17,3 @@
 #include "Vec2.h"
 
 template <class T> using ptr = std::shared_ptr<T>;
-// declaration of entity manager
