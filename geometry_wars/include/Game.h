@@ -6,8 +6,8 @@
 #include "config.h"
 #include <string>
 
-struct PlayerConfig 
-{ 
+struct PlayerConfig
+{
     int SR, CR, FR, FG, FB, OR, OG, OB, OT, V;
     float S;
 
@@ -48,7 +48,7 @@ class Game
     int m_current_frame = 0;
     int m_last_enemy_time = 0;
     int m_score = 0;
-    bool m_running = true; 
+    bool m_running = true;
     bool m_paused = false;
 
     std::shared_ptr<Entity> m_player;

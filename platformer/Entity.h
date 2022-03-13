@@ -4,7 +4,7 @@
 #include "Components.h"
 #include <tuple>
 
-typedef std::tuple< 
+typedef std::tuple<
     CTransform,
     CLifespan,
     CInput,
@@ -38,12 +38,14 @@ public:
     void destroy() { m_alive = false; }
     bool isAlive() const { return m_alive; }
 
+    // inline definition
     template <typename T>
         bool hasComponent() const
         {
             return getComponent<T>().has;
         }
 
+    // inline definition
     template <class T, class... tArgs>
         T & addComponent(tArgs&&... mArgs)
         {
@@ -53,12 +55,15 @@ public:
             return component;
         }
 
+    // inline definition
+    // will be generated for each translation unit
     template <class T>
         T & getComponent()
         {
             return std::get<T>(m_components);
         }
 
+    // inline definition
     template <class T>
         const T & getComponent() const
         {

@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include <string>
 
 Scene::Scene(GameEngine * game)
     : m_game(game),
@@ -6,8 +7,8 @@ Scene::Scene(GameEngine * game)
     m_paused(false), m_hasEnded(false)
 {  }
 
-void Scene::registerAction(int key, bool * input)
+void Scene::registerAction(int key, const std::string & command)
 {
-    m_actionMap[key] = input;
+    m_actionMap[key] = command;
 }
 

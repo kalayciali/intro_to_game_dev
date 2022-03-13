@@ -16,24 +16,24 @@ class Assets
     std::map<std::string, sf::Font> m_fontMap;
 
     void addTexture(
-            const std::string & textureName, 
-            const std::string & path, 
+            const std::string & textureName,
+            const std::string & path,
             bool smooth = true
             );
 
     void addAnimation(
-            const std::string & animName, 
-            const std::string & textureName, 
+            const std::string & animName,
+            const std::string & textureName,
             size_t animCount, size_t animSpeed
             );
 
     void addFont(
-            const std::string & fontName, 
+            const std::string & fontName,
             const std::string & path
             );
 
     void addSound(
-            const std::string & soundName, 
+            const std::string & soundName,
             const std::string & path
             );
 

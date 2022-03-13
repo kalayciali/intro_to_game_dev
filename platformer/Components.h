@@ -2,6 +2,7 @@
 
 #include "Animation.h"
 #include "Assets.h"
+#include "State.h"
 #include <string>
 
 struct Component
@@ -42,12 +43,7 @@ struct CInput
     bool left = false;
     bool right = false;
     bool attack = false;
-    bool canAttack = false;
-    bool canJump = false;
 
-    bool toggleCollision = false;
-    bool toggleGrid = false;
-    bool toggleTexture = false;
     bool quit = false;
     bool pause = false;
 
@@ -81,8 +77,9 @@ struct CGravity : public Component
 
 struct CState : public Component
 {
-    std::string state = "jumping";
-    CState(const std::string & s) : state(s) {}
+    State state;
+
+    CState(State newState) : state(newState) {}
 };
 
 

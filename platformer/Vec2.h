@@ -17,8 +17,10 @@ public:
         : x(xin), y(yin) {}
 
     float magnitude() const;
+    Vec2 abs() const;
 
-    void print() { std::cout << "<" << x << ", " << y << ">" << std::endl; } 
+    void print() 
+    { std::cout << "<" << x << ", " << y << ">" << std::endl; } 
 
     // member operators
     bool operator==(const Vec2 & rhs) const;
@@ -28,6 +30,7 @@ public:
     void operator-=(const Vec2 & rhs);
     void operator*=(float val);
     void operator/=(float val);
+    operator bool();
 
     float dist(const Vec2 & rhs) const;
 

@@ -8,17 +8,20 @@ void GameEngine::init(const std::string & path)
     m_window.create(sf::VideoMode(1280, 768), "Vikking");
     // 60 fps
     m_window.setFramerateLimit(60);
+    // load assets
     m_assets.loadFromFile(m_source_dir, path);
 
-    m_inputToActionMap[sf::Keyboard::W] = Action("UP", sf::Keyboard::W);
-    m_inputToActionMap[sf::Keyboard::A] = Action("LEFT", sf::Keyboard::A);
-    m_inputToActionMap[sf::Keyboard::S] = Action("DOWN", sf::Keyboard::S);
-    m_inputToActionMap[sf::Keyboard::D] = Action("RIGHT", sf::Keyboard::S);
-    m_inputToActionMap[sf::Keyboard::Space] = Action("ATTACK", sf::Keyboard::Space);
-    m_inputToActionMap[sf::Keyboard::C] = Action("TOGGLE_COLLISION", sf::Keyboard::C);
-    m_inputToActionMap[sf::Keyboard::T] = Action("TOGGLE_TEXTURE", sf::Keyboard::T);
-    m_inputToActionMap[sf::Keyboard::G] = Action("TOGGLE_GRID", sf::Keyboard::G);
-
+    // presave keyboards
+    m_inputToActionMap[sf::Keyboard::W] = Action(sf::Keyboard::W);
+    m_inputToActionMap[sf::Keyboard::A] = Action(sf::Keyboard::A);
+    m_inputToActionMap[sf::Keyboard::S] = Action(sf::Keyboard::S);
+    m_inputToActionMap[sf::Keyboard::D] = Action(sf::Keyboard::S);
+    m_inputToActionMap[sf::Keyboard::Space] = Action(sf::Keyboard::Space);
+    m_inputToActionMap[sf::Keyboard::C] = Action(sf::Keyboard::C);
+    m_inputToActionMap[sf::Keyboard::T] = Action(sf::Keyboard::T);
+    m_inputToActionMap[sf::Keyboard::G] = Action(sf::Keyboard::G);
+    m_inputToActionMap[sf::Keyboard::P] = Action(sf::Keyboard::P);
+    m_inputToActionMap[sf::Keyboard::Escape] = Action(sf::Keyboard::Escape);
 }
 
 
@@ -28,11 +31,14 @@ std::shared_ptr<Scene> GameEngine::currentScene()
 }
 
 void GameEngine::changeScene(
-        const std::string & sceneName, 
+        const std::string & sceneName,
         std::shared_ptr<Scene> scene,
         bool endCurrentScene
         )
 {
+    if (endCurrentScene)
+        m_sceneMap[sceneName] = scene;
+    m_currentScene = sceneName;
 }
 
 void GameEngine::sUserInput()
@@ -64,9 +70,7 @@ void GameEngine::sUserInput()
                 action.setType("END");
                 scene->sDoAction(action);
             }
-
         }
-
     }
 }
 
@@ -79,7 +83,6 @@ void GameEngine::run()
 {
     while (m_running)
     {
-
     }
 }
 

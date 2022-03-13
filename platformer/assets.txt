@@ -1,5 +1,5 @@
 Texture     Tex_P_Idle      images/Viking/viking_idle.png
-Texture     Tex_P_Run       images/Viking/viking_walk.png
+Texture     Tex_P_Walk       images/Viking/viking_walk.png
 Texture     Tex_P_Jump      images/Viking/viking_jump.png
 Texture     Tex_P_Attack    images/Viking/viking_attack.png
 Texture     Tex_P_Hit       images/Viking/viking_hit.png
@@ -8,7 +8,7 @@ Texture     Tex_Ground      images/tiles/tile_ground.png
 Texture     Tex_Debris      images/decorates/dec_debris.png
 Texture     Tex_Wood        images/decorates/dec_wood.png
 Animation   P_Idle      Tex_P_Idle      4   10
-Animation   P_Run       Tex_P_Run       4   10
+Animation   P_Walk       Tex_P_Walk       4   10
 Animation   P_Jump      Tex_P_Jump      5   10
 Animation   P_Attack    Tex_P_Attack    3   5
 Animation   P_Hit       Tex_P_Hit       4   5

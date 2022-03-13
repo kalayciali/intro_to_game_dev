@@ -14,17 +14,33 @@ float Vec2::magnitude() const
     return sqrt(x * x + y * y);
 }
 
-// member operators 
+Vec2::operator bool()
+{
+    // if two of them bigger than 0
+    if (x && y)
+        return true;
+    return false;
+}
+
+Vec2 Vec2::abs() 
+{
+    Vec2 absoluteVec;
+    absoluteVec.x = std::abs(x);
+    absoluteVec.y = std::abs(y);
+    return absoluteVec;
+}
+
+// member operators
 //
 bool Vec2::operator==(const Vec2 & rhs) const
-{ 
-    return x == rhs.x && y == rhs.y; 
+{
+    return x == rhs.x && y == rhs.y;
 }
 
 bool Vec2::operator!=(const Vec2 & rhs) const
-{ 
-    return x != rhs.x || y != rhs.y; 
-} 
+{
+    return x != rhs.x || y != rhs.y;
+}
 
 
 void Vec2::operator+=(const Vec2 & rhs)
@@ -57,9 +73,9 @@ void Vec2::operator/=(float val)
 // nonmember operators
 // num will be implicitly converted to Vec2(num, num)
 
-Vec2 operator+(const Vec2 & lhs, const Vec2 & rhs) 
-{ 
-    return Vec2(lhs.x + rhs.x, lhs.y + rhs.y); 
+Vec2 operator+(const Vec2 & lhs, const Vec2 & rhs)
+{
+    return Vec2(lhs.x + rhs.x, lhs.y + rhs.y);
 }
 
 Vec2 operator-(const Vec2 & lhs, const Vec2 & rhs)

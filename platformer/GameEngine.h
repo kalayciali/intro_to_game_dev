@@ -6,10 +6,13 @@
 #include "Action.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 
-typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
+typedef std::map<std::string, std::shared_ptr<Scene> > SceneMap;
 
 class GameEngine
 {
+
+    std::map<int, Action> m_inputToActionMap;
+    void init(const std::string & path);
 
 protected:
     // accessible via pointer
@@ -18,27 +21,26 @@ protected:
     Assets m_assets;
     std::string m_currentScene;
     SceneMap m_sceneMap;
-    std::map<int, Action> m_inputToActionMap;
     bool m_running = true;
 
-    void init(const std::string & path);
     void update();
+    void quit() { m_running = false; }
 
-    void sUserInput();
 
     std::shared_ptr<Scene> currentScene();
+    void changeScene(
+            const std::string & sceneName,
+            std::shared_ptr<Scene> scene,
+            bool endCurrentScene = false
+            );
+
+    void sUserInput();
 
 public:
 
     GameEngine(const std::string & path) { init(path); }
 
-    void changeScene(
-            const std::string & sceneName, 
-            std::shared_ptr<Scene> scene,
-            bool endCurrentScene = false
-            );
 
-    void quit() { m_running = false; }
     void run();
 
     sf::RenderWindow & window() const { return m_window; }

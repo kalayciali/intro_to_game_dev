@@ -366,7 +366,6 @@ void Game::sUserInput()
                 // spawnSpecialWeapon(m_player, mouse);
             }
         }
-            
     }
 }
 
@@ -498,10 +497,10 @@ void::Game::run()
     {
         // update entities at the start of the frame
         m_entity_fact.update();
-        sLifespan();
 
         if (!m_paused)
         {
+            sLifespan();
             sEnemySpawner();
             sMovement();
         }
