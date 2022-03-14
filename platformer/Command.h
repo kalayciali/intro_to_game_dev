@@ -1,8 +1,18 @@
 #include "Entity.h"
+#include "Action.h"
+
+#include <iostream>
+#include <functional>
+
+std::function<void(void)> closureWrapper1(const Action & action)
+{
+    int x = 10;
+    return [x](){std::cout << "Value in the closure: " << x << std::endl;};
+}
 
 class Command
 {
-protected:
+    std::string m_name;
     std::string m_type;
 
 public:

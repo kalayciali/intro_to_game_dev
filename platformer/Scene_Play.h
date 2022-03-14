@@ -8,6 +8,7 @@
 #include "EntityManager.h"
 #include <SFML/Graphics/VertexArray.hpp>
 #include <fstream>
+#include <functional>
 
 class Scene_Play : public Scene
 {

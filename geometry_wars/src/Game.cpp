@@ -35,7 +35,7 @@ void Game::init(std::string path)
 
     {
         // set window
-        int w_width, w_height, antialias, frate, fullscreen; 
+        int w_width, w_height, antialias, frate, fullscreen;
         fin >> input_type >> w_width >> w_height;
         fin >> frate >> fullscreen >> antialias;
 
@@ -43,10 +43,10 @@ void Game::init(std::string path)
         settings.antialiasingLevel = antialias;
 
         if (fullscreen)
-            m_window.create(sf::VideoMode(w_width, w_height), "Geometry Wars", 
+            m_window.create(sf::VideoMode(w_width, w_height), "Geometry Wars",
                 sf::Style::Fullscreen, settings);
         else
-            m_window.create(sf::VideoMode(w_width, w_height), "Geometry Wars", 
+            m_window.create(sf::VideoMode(w_width, w_height), "Geometry Wars",
                 sf::Style::Default, settings);
 
         m_window.setFramerateLimit(frate);
@@ -78,11 +78,11 @@ void Game::init(std::string path)
 
     while (fin >> input_type)
     {
-        if (input_type == "Player") 
+        if (input_type == "Player")
             m_P_config.set(fin);
         else if (input_type == "Enemy")
             m_E_config.set(fin);
-        else 
+        else
             m_B_config.set(fin);
     }
 
@@ -97,12 +97,12 @@ void Game::spawnPlayer()
 
     entity->c_transform = std::make_shared<CTransform>(
             Vec2(w_size.x / 2.f, w_size.y / 2.f),
-            Vec2(0.f, 0.f), 
+            Vec2(0.f, 0.f),
             1.f
             );
 
     entity->c_shape = std::make_shared<CShape>(
-            m_P_config.SR, 
+            m_P_config.SR,
             m_P_config.V,
             sf::Color(m_P_config.FR, m_P_config.FG, m_P_config.FB),
             sf::Color(m_P_config.OR, m_P_config.OG, m_P_config.OB),
@@ -150,7 +150,7 @@ void Game::spawnEnenmy()
     int vertices  = ( rand() % v_diff ) + m_E_config.VMIN;
 
     enemy->c_shape = std::make_shared<CShape>(
-            m_E_config.SR, 
+            m_E_config.SR,
             vertices,
             sf::Color(rand() % 256, rand() % 256, rand() % 256),
             sf::Color(m_E_config.OR, m_E_config.OG, m_E_config.OB),
@@ -167,9 +167,9 @@ void Game::spawnEnenmy()
 
 void Game::spawnSmallEnemies(ptr<Entity> e)
 {
-    // when spawning enemies, we have to read values 
+    // when spawning enemies, we have to read values
     // from entity killed
-    // set each small enemy half the size with same color 
+    // set each small enemy half the size with same color
     // small enemies worth double points
     int vertices = e->c_shape->circle.getPointCount();
     auto color = e->c_shape->circle.getFillColor();
@@ -186,13 +186,13 @@ void Game::spawnSmallEnemies(ptr<Entity> e)
         small_enemy->c_score = std::make_shared<CScore>(2 * score);
 
         small_enemy->c_transform = std::make_shared<CTransform>(
-                pos, 
+                pos,
                 Vec2(speed * std::cos(angle), speed * std::sin(angle)),
                 1.f
                 );
 
         small_enemy->c_shape = std::make_shared<CShape>(
-                m_E_config.SR / 2, 
+                m_E_config.SR / 2,
                 vertices,
                 color,
                 sf::Color(m_E_config.OR, m_E_config.OG, m_E_config.OB),
@@ -219,13 +219,13 @@ void Game::spawnBullet(ptr<Entity> entity, const Vec2 & target)
     auto bullet = m_entity_fact.addEntity("bullet");
 
     bullet->c_transform = std::make_shared<CTransform>(
-            pos, 
+            pos,
             Vec2(m_B_config.S * std::cos(angle), m_B_config.S * std::sin(angle)),
             1.f
             );
 
     bullet->c_shape = std::make_shared<CShape>(
-            m_B_config.SR, 
+            m_B_config.SR,
             m_B_config.V,
             sf::Color(m_B_config.FR, m_B_config.FG, m_B_config.FB),
             sf::Color(m_B_config.OR, m_B_config.OG, m_B_config.OB),
@@ -255,7 +255,7 @@ void Game::sMovement()
 
     float diff = m_P_config.S - m_P_config.S * std::cos(0.25f);
 
-    if (m_player->c_input->left) 
+    if (m_player->c_input->left)
         player_vel.x -= m_P_config.S;
     if (m_player->c_input->right)
         player_vel.x += m_P_config.S;
@@ -507,7 +507,7 @@ void::Game::run()
 
         sCollision();
         sUserInput();
-        sRender();
+        // sRender();
 
         m_current_frame++;
     }

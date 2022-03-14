@@ -11,7 +11,9 @@ typedef std::tuple<
     CBBox,
     CAnimation,
     CGravity,
-    CState > ComponentTuple;
+    CState,
+    CDraggable
+> ComponentTuple;
 
 
 

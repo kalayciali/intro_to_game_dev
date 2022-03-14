@@ -1,0 +1,14 @@
+{
+  "configurations": {
+    "Launch": {
+      "adapter": "vscode-cpptools",
+      "configuration": {
+        "request": "launch",
+        "program": "build/sfmlapp",
+        "cwd": "/home/phymat10/intro_to_game_programming/geometry_wars",
+        "externalConsole": true,
+        "MIMode": "gdb"
+      }
+    }
+  }
+}

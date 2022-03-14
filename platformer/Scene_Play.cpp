@@ -112,7 +112,7 @@ void Scene_Play::loadLevel(const std::string & fname)
     }
 
 
-    if (brick->getComponent<CAnimation>().animation.getName() == "brick")
+    if (m_player->getComponent<CAnimation>().animation.getName() == "brick")
     {
 
     }
@@ -127,7 +127,7 @@ void Scene_Play::spawnPlayer(const std::string & animName = "P_Idle", const std:
 
     player->addComponent<CAnimation>(m_game->assets().getAnimation(animName));
     player->addComponent<CInput>();
-    player->addComponent<CTransform>(
+    player->ponent<CTransform>(
             gridToMidPixel(m_playerConfig.X, m_playerConfig.Y, player));
     player->addComponent<CBBox>({ m_playerConfig.CX, m_playerConfig.CY });
     player->addComponent<CGravity>( m_playerConfig.GRAVITY );
@@ -140,17 +140,77 @@ void Scene_Play::init(const std::string & levelPath)
 {
     loadLevel(levelPath);
 
-    registerAction(sf::Keyboard::W, "JUMP");
-    registerAction(sf::Keyboard::A, "LEFT");
-    registerAction(sf::Keyboard::S, "DOWN");
-    registerAction(sf::Keyboard::D, "RIGHT");
-    registerAction(sf::Keyboard::Space, "ATTACK");
+    // by default keyboard
+    registerCommand(sf::Keyboard::W,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_player->getComponent<CInput>().up = true;
+                else
+                    m_player->getComponent<CInput().up = false);
+            });
 
-    registerAction(sf::Keyboard::P, "PAUSE");
-    registerAction(sf::Keyboard::Escape, "QUIT");
-    registerAction(sf::Keyboard::T, "T_TEXTURE");
-    registerAction(sf::Keyboard::C, "T_COLLISION");
-    registerAction(sf::Keyboard::G, "T_GRID");
+    registerCommand(sf::Keyboard::A,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_player->getComponent<CInput>().left = true;
+                else
+                    m_player->getComponent<CInput().left = false);
+            });
+
+    registerCommand(sf::Keyboard::S,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_player->getComponent<CInput>().down = true;
+                else
+                    m_player->getComponent<CInput().down = false);
+            });
+
+    registerCommand(sf::Keyboard::D,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_player->getComponent<CInput>().right = true;
+                else
+                    m_player->getComponent<CInput().right = false);
+            });
+
+    registerCommand(sf::Keyboard::Space,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_player->getComponent<CInput>().attack = true;
+                else
+                    m_player->getComponent<CInput().attack = false);
+            });
+
+    registerCommand(sf::Keyboard::P,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_paused = !m_paused;
+            });
+
+    registerCommand(sf::Keyboard::Escape, 
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_hasEnded = true;
+            });
+
+    registerCommand(sf::Keyboard::C,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_drawCollision = !m_drawCollision;
+            });
+
+    registerCommand(sf::Keyboard::G,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_drawGrid = !m_drawGrid;
+            });
+
+    registerCommand(sf::Keyboard::T,
+            [this](const Action & action) {
+                if (action.type() == "START")
+                    m_drawTextures = !m_drawTextures;
+            });
+
 
 }
 
@@ -307,7 +367,7 @@ void Scene_Play::sCollision()
             // spawn player
         }
 
-        // dont let player to move left side 
+        // dont let player to move left side
         if ( (pTransform.pos.x - pBorder.halfSize.x) < 0)
             pTransform.pos.x = pBorder.halfSize.x;
 
@@ -353,61 +413,19 @@ void Scene_Play::sCollision()
 
 void Scene_Play::sDoAction(const Action & action)
 {
-    auto pair = m_actionMap.find(action.code());
-    if ( pair != m_actionMap.end() )
+    if (action.name() == "KEY")
     {
-        if ( action.type() == "START" )
-        {
-            if (pair->second == "JUMP")
-                m_player->getComponent<CInput>().up = true;
-
-            else if (pair->second == "LEFT")
-                m_player->getComponent<CInput>().left = true;
-
-            else if (pair->second == "DOWN")
-                m_player->getComponent<CInput>().down = true;
-
-            else if (pair->second == "RIGHT")
-                m_player->getComponent<CInput>().right = true;
-
-            else if (pair->second == "ATTACK")
-                m_player->getComponent<CInput>().attack = true;
-
-            else if (pair->second == "T_TEXTURE")
-                m_drawTextures = !m_drawTextures;
-
-            else if (pair->second == "T_COLLISION")
-                m_drawCollision = !m_drawCollision;
-
-            else if (pair->second == "T_GRID")
-                m_drawGrid = !m_drawGrid;
-
-            else if (pair->second == "QUIT")
-                m_hasEnded = true;
-
-            else if (pair->second == "PAUSE")
-                m_paused = true;
-
-        }
-
-        else if ( action.type() == "END" )
-        {
-            if (pair->second == "JUMP")
-                m_player->getComponent<CInput>().up = false;
-
-            else if (pair->second == "LEFT")
-                m_player->getComponent<CInput>().left = false;
-
-            else if (pair->second == "DOWN")
-                m_player->getComponent<CInput>().down = false;
-
-            else if (pair->second == "RIGHT")
-                m_player->getComponent<CInput>().right = false;
-
-            else if (pair->second == "ATTACK")
-                m_player->getComponent<CInput>().attack = false;
-
-        }
+        auto pair = m_keyToCommand.find(action.code());
+        if (pair != m_keyToCommand.end())
+            pair->second(action);
     }
+
+    else if (action.name() == "MOUSE")
+    {
+        auto pair = m_mouseToCommand.find(action.code());
+        if (pair != m_mouseToCommand.end())
+            pair->second(action);
+    }
+
 }
 

@@ -1,14 +1,12 @@
 #include "Scene.h"
 #include <string>
 
-Scene::Scene(GameEngine * game)
-    : m_game(game),
-    m_currentFrame(0),
-    m_paused(false), m_hasEnded(false)
-{  }
 
-void Scene::registerAction(int key, const std::string & command)
+void Scene::registerCommand(int key, std::function<void(Action)> command, const std::string & name)
 {
-    m_actionMap[key] = command;
+    if (name == "KEY")
+        m_keyToCommand[key] = command;
+    else if (name == "MOUSE")
+        m_mouseToCommand[key] = command;
 }
 

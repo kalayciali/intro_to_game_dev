@@ -1,5 +1,7 @@
 #include "GameEngine.h"
+#include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <string>
 
 void GameEngine::init(const std::string & path)
@@ -15,13 +17,17 @@ void GameEngine::init(const std::string & path)
     m_inputToActionMap[sf::Keyboard::W] = Action(sf::Keyboard::W);
     m_inputToActionMap[sf::Keyboard::A] = Action(sf::Keyboard::A);
     m_inputToActionMap[sf::Keyboard::S] = Action(sf::Keyboard::S);
-    m_inputToActionMap[sf::Keyboard::D] = Action(sf::Keyboard::S);
+    m_inputToActionMap[sf::Keyboard::D] = Action(sf::Keyboard::D);
     m_inputToActionMap[sf::Keyboard::Space] = Action(sf::Keyboard::Space);
     m_inputToActionMap[sf::Keyboard::C] = Action(sf::Keyboard::C);
     m_inputToActionMap[sf::Keyboard::T] = Action(sf::Keyboard::T);
     m_inputToActionMap[sf::Keyboard::G] = Action(sf::Keyboard::G);
     m_inputToActionMap[sf::Keyboard::P] = Action(sf::Keyboard::P);
     m_inputToActionMap[sf::Keyboard::Escape] = Action(sf::Keyboard::Escape);
+
+    // dont presave mouse actions
+    // they are basic enum
+    // will cause key collision
 }
 
 
@@ -52,13 +58,17 @@ void GameEngine::sUserInput()
         if (event.type == sf::Event::Closed)
             m_running = false;
 
+        // in current setup don't give permission
+        // to use keyboard and mouse at the same time
+        // because they are simple enums
+
         if (event.type == sf::Event::KeyPressed)
         {
             if (m_inputToActionMap.find(event.key.code) != m_inputToActionMap.end())
             {
                 Action & action = m_inputToActionMap[event.key.code];
                 action.setType("START");
-                scene->sDoAction(action);
+                currentScene()->sDoAction(action);
             }
         }
 
@@ -68,9 +78,67 @@ void GameEngine::sUserInput()
             {
                 Action & action = m_inputToActionMap[event.key.code];
                 action.setType("END");
-                scene->sDoAction(action);
+                currentScene()->sDoAction(action);
             }
         }
+
+        // mouse events
+        auto mousePos = sf::Mouse::getPosition(m_window);
+
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            switch (event.mouseButton.button)
+            {
+                case sf::Mouse::Left:
+                    {
+                        Action mouse(sf::Mouse::Left, "MOUSE", "START");
+                        mouse.setPos(mousePos.x, mousePos.y);
+                        currentScene()->sDoAction(mouse);
+                        break;
+                    }
+
+                case sf::Mouse::Right:
+                    {
+                        Action mouse(sf::Mouse::Right, "MOUSE", "START");
+                        mouse.setPos(mousePos.x, mousePos.y);
+                        currentScene()->sDoAction(mouse);
+                        break;
+                    }
+                default: break;
+            }
+        }
+
+        if (event.type == sf::Event::MouseButtonReleased)
+        {
+            switch (event.mouseButton.button)
+            {
+                case sf::Mouse::Left:
+                    {
+                        Action mouse(sf::Mouse::Left, "MOUSE", "START");
+                        mouse.setPos(mousePos.x, mousePos.y);
+                        currentScene()->sDoAction(mouse);
+                        break;
+                    }
+
+                case sf::Mouse::Right:
+                    {
+                        Action mouse(sf::Mouse::Right, "MOUSE", "START");
+                        mouse.setPos(mousePos.x, mousePos.y);
+                        currentScene()->sDoAction(mouse);
+                        break;
+                    }
+                default: break;
+            }
+        }
+
+        if (event.type == sf::Event::MouseMoved)
+        {
+            // here 6 is set to mousemove
+            Action mouse(6, "MOUSE", "MOUSE_MOVE");
+            mouse.setPos(event.mouseMove.x, event.mouseMove.y);
+            currentScene()->sDoAction(mouse);
+        }
+
     }
 }
 

@@ -82,4 +82,8 @@ struct CState : public Component
     CState(State newState) : state(newState) {}
 };
 
+struct CDraggable : public Component
+{
+    bool dragging = false;
+}
 
